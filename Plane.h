@@ -9,18 +9,28 @@
 
 class Plane {
 public:	
-	Plane( GLuint shaderID );
+	Plane( GLuint shaderID, int width, int height );
+	virtual ~Plane();
 	
-	void init();
+	virtual void init();
 	
-	void draw();
+	virtual void draw();
 
-private:
+private:	
+	
+	
 	GLuint sID;
 	GLuint vaoID;
 	GLuint vboVertID;
 	GLuint vboTexCoordID;
+	
+	GLuint textID;
+	GLuint textUniformLoc;
 
+	int w;
+	int h;
+	
+	virtual void initTexture();
 			
 };
 

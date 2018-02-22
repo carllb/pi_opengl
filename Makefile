@@ -1,6 +1,13 @@
 CC = g++
 CFLAGS = -g -Wall -lGLEW -lGLU -lglut -lglfw -lGL
 
+
+visual: visual.o shader.o Plane.o
+	$(CC) -o visual visual.o shader.o Plane.o $(CFLAGS)
+	
+visual.o: visual.cpp tutorial/shader.hpp Plane.h
+	$(CC) -c -o visual.o visual.cpp $(CFLAGS)
+
 main: main.o shader.o
 	$(CC) -o main main.o shader.o $(CFLAGS)
 
@@ -14,4 +21,4 @@ Plane.o: Plane.cpp Plane.h
 	$(CC) -c -o Plane.o Plane.cpp $(CFLAGS)
 
 clean:
-	rm shader.o main.o main Plane.o
+	rm -f shader.o main.o main Plane.o visual.o visual
