@@ -9,13 +9,13 @@
 GLFWwindow* window;
 GLuint programID;
 Plane* p;
-const int width = 640;
-const int height = 480;
+const int width = 800;
+const int height = 600;
 
 
 void initOpenGL(){
-	
-	
+
+
 	if( !glfwInit() )
 	{
 		fprintf( stderr, "Failed to initialize GLFW\n");
@@ -26,7 +26,7 @@ void initOpenGL(){
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
-	
+
 
 	window = glfwCreateWindow( width, height, "Visuals", NULL, NULL);
 
@@ -42,31 +42,31 @@ void initOpenGL(){
 		exit(-1);
 	}
 
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);	
-	
-	
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
+
 	programID = LoadShaders("shaders/shd1.vert","shaders/shd1.frag");
 	p = new Plane( programID, width, height );
-	
+
 	p->init();
 }
 
-void beginRender(){	 
+void beginRender(){
 	do {
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
+
 		p->draw();
-		
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-		
+
 	} while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 				glfwWindowShouldClose(window) == 0 );
 }
 
 
 void cleanup(){
-	delete p;	
+	delete p;
 
 	glfwTerminate();
 	glDeleteProgram( programID );
@@ -74,11 +74,11 @@ void cleanup(){
 
 
 int main() {
-	
+
 	initOpenGL();
 	std::cout << "Done with init!" << std::endl;
 	beginRender();
 	cleanup();
-	
+
 	return 0;
 }
