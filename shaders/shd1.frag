@@ -39,7 +39,7 @@ void main() {
 			}else if(count == 3){
 				n_color = vec4(1,1,0,1);
 			}else{
-				n_color= vec4(0,0,0,1);
+				n_color= vec4(myColor.r,0,myColor.ba);
 			}
 
 		}
