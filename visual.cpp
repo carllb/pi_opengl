@@ -9,8 +9,8 @@
 GLFWwindow* window;
 GLuint programID;
 Plane* p;
-const int width = 800;
-const int height = 600;
+const int width = 1920;
+const int height = 1080;
 
 
 void initOpenGL(){
@@ -28,7 +28,7 @@ void initOpenGL(){
 
 
 
-	window = glfwCreateWindow( width, height, "Visuals", NULL, NULL);
+	window = glfwCreateWindow( width, height, "Visuals", glfwGetPrimaryMonitor(), NULL);
 
 	if( window == NULL ){
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );

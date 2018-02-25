@@ -12,37 +12,36 @@ uniform int start;
 
 
 void main() {
+		if (start == 1){
+			n_color = texelFetch(text_start, ivec2(texCoord),0);
+		}else{
+			vec4 myColor = texelFetch(pixel_sampler, ivec2(texCoord),0);
 
-
-	if (start == 1){
-		 n_color = texture( text_start, texCoord);
-	}else{
-			//n_color = texture( text_sampler, texCoord);
-
-	int count = 0;
-	for (int i = -1; i <= 1; i++){
-		for (int j = -1; j <= 1; j++) {
-			if (!(i == 0 && j == 0)){
-				if (texture( pixel_sampler, vec2(texCoord.x + i,texCoord.y+j)).y >= 0.5 ){
-					count++;
+			int count = 0;
+			for (int i = -1; i <= 1; i++){
+				for (int j = -1; j <= 1; j++) {
+					if (!(i == 0 && j == 0)){
+						if (texelFetch( pixel_sampler, ivec2(texCoord) + ivec2(i,j),0).g >= 0.5 ){
+							count++;
+						}
+					}
 				}
 			}
-		}
-	}
 
-	if ( texture( pixel_sampler, texCoord).y >= 0.5){
-		if (count < 2){
-			n_color = vec4(0,0,0,1);
-		}else if (count > 3){
-			n_color = vec4(0,0,0,1);
-		}else{
-			n_color = vec4(0,1,0,1);
-		}
-	}else if (count == 3) {
-		n_color = vec4(0,1,0,1);
-	}
-	n_color = texture( pixel_sampler, texCoord );
-}
+			if (myColor.g >= 0.5){
+				if (count < 2){
+					n_color = vec4(1,0,0,1);
+				}else if (count > 3){
+					n_color = vec4(0,0,1,1);
+				}else{
+					n_color = vec4(0,1,0,1);
+				}
+			}else if(count == 3){
+				n_color = vec4(1,1,0,1);
+			}else{
+				n_color= vec4(0,0,0,1);
+			}
 
+		}
 
 }

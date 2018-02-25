@@ -17,21 +17,25 @@ Plane::Plane( GLuint shaderID, int width, int height ):
 void Plane::init() {
 	static const GLfloat vertData[] = {
 		// Left bottom triangle
-		-1.0f,  1.0f,
-		-1.0f, -1.0f,
-		 1.0f, -1.0f,
+		-1.0f,  1.0f, //a
+		-1.0f, -1.0f, //b
+		 1.0f, -1.0f, //c
 
 		 // Right top triangle
-		 1.0f, -1.0f,
-		-1.0f,  1.0f,
-		 1.0f,  1.0f,
+		 1.0f, -1.0f, //d
+		-1.0f,  1.0f, //e
+		 1.0f,  1.0f, //f
 	};
 
-	static const GLfloat texCoords[] = {
+	static const GLint texCoords[] = {
 		// Left bottom triangle
-		0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		0, h, //a
+		0, 0, //b
+		w, 0, //c
 		//Right top triangle
-		1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f
+		w, 0, //d
+	  0, h, //e
+		w, h  //f
 	};
 
 	glGenFramebuffers(1, &frameBufferID);
@@ -61,7 +65,7 @@ void Plane::init() {
 			GL_STATIC_DRAW );
 
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+	glVertexAttribPointer(1, 2, GL_INT, false, 0, 0);
 
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, 0 );
@@ -95,17 +99,18 @@ void Plane::init() {
 	screenTexUniformLoc = glGetUniformLocation(screenSID,"text_sampler");
 	pixelTexUniformLoc = glGetUniformLocation(screenSID,"pixel_sampler");
 
-	glGenBuffersARB(1, &pboID);
+	glGenBuffers(1, &pboID);
 
 }
 
 
 void Plane::initTexture(){
-	unsigned char data[w*h*3];
+	unsigned char data[w*h*4];
 
 	srand(time(NULL));
 
-	for ( unsigned int i = 1; i<sizeof(data); i+= 3){
+	for ( unsigned int i = 1; i<sizeof(data); i++ ){
+
 		int o = rand() % 10;
 		if (o == 9){
 			data[i] = 255;
@@ -113,13 +118,17 @@ void Plane::initTexture(){
 			data[i] = 0;
 		}
 
+	//data[i] = 0;
 
 	}
-	/*
-	data[0] = 255;
-	data[1] = 0;
-	data[2] = 0;
-*/
+
+	//data[0] = 255;
+	//data[1] = 0;
+	//data[2] = 0;
+
+	//data[3] = 0;
+	//data[4] = 255;
+	//data[5] = 0;
 
 	glGenTextures(3, textID );
 	glBindTexture(GL_TEXTURE_2D, textID[0]);
@@ -160,8 +169,8 @@ void Plane::initTexture(){
 void Plane::draw() {
 
 
-	// For the frame buffer
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+	// For the frame buffer but right now the fram buffer is disabled
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0,w,h);
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -177,10 +186,10 @@ void Plane::draw() {
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textID[2] );
-	glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pboID);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h,
 		GL_RGB, GL_UNSIGNED_BYTE, 0);
-	glBufferDataARB(GL_PIXEL_UNPACK_BUFFER_ARB, w*h*3,0,GL_STREAM_DRAW_ARB);
+	glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*3,0,GL_DYNAMIC_DRAW);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textID[1] );
@@ -192,26 +201,15 @@ void Plane::draw() {
 	glEnableVertexAttribArray(1);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glBindBuffer(GL_PIXEL_PACK_BUFFER, pboID);
+	//glNamedFramebufferReadBuffer(frameBufferID,GL_FRONT);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+	glReadPixels(0,0,w,h, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+
 /*
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glViewport(0,0,w,h);
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// For the screen
-	glUseProgram( screenSID );
-
-	glBindVertexArray(vaoID[1]);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textID );
-	// Set the uniform texture sampler to use texture 0
-	glUniform1i(textUniformLoc, 0);
-
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-*/
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0,w,h);
 
@@ -239,6 +237,7 @@ void Plane::draw() {
 
 	glReadPixels(0,0,w,h, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
+	*/
 	glBindTexture(GL_TEXTURE_2D, 0 );
 	glDisableVertexAttribArray(0);
 
@@ -247,13 +246,14 @@ void Plane::draw() {
 	glUseProgram(0);
 
 	start = 0;
-	usleep( 2000000 );
+	//usleep( 50000 * 2); // 500000 * 2 = one sec
 }
 
 Plane::~Plane(){
 	glDeleteTextures(2, textID );
 	glDeleteBuffers(2, vboTexCoordID);
 	glDeleteBuffers(2, vboVertID);
+	glDeleteBuffers(1, &pboID);
 	glDeleteVertexArrays(2, vaoID);
 	glDeleteFramebuffers(1, &frameBufferID);
 }
