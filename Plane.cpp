@@ -39,8 +39,7 @@ void Plane::init() {
 		w, h  //f
 	};
 
-	glGenFramebuffers(1, &frameBufferID);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+
 
 	glGenVertexArrays(2, vaoID );
 	glGenBuffers( 2, vboVertID );
@@ -73,7 +72,7 @@ void Plane::init() {
 	glBindVertexArray(0);
 
 	initTexture();
-
+	/*
 	glGenRenderbuffers(1, &rboID);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboID);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, w, h);
@@ -93,7 +92,7 @@ void Plane::init() {
 		std::cerr << "FRAMBUFFER FAILED!" << std::endl;
 		exit(-1);
 	}
-
+	*/
 	passShaderID = LoadShaders("shaders/pass.vert","shaders/pass.frag");
 
 	startUniformLoc = glGetUniformLocation(sID, "start");
@@ -157,7 +156,7 @@ void Plane::draw() {
 	// For the frame buffer but right now the fram buffer is disabled
 
 	// This is not drawn to the screen it is drawn just to be saved into a pixle buffer
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0,w,h);
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
