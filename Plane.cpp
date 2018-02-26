@@ -7,8 +7,9 @@
 #include <iostream>
 #include <unistd.h>
 
-Plane::Plane( GLuint shaderID, int width, int height ):
-	sID(shaderID), start(1), w(width), h(height)
+Plane::Plane( GLuint shaderID, int width, int height, int window_width, int window_height ):
+	sID(shaderID), start(1), w(width), h(height), window_w(window_width),
+		window_h(window_height)
 {
 }
 
@@ -93,12 +94,13 @@ void Plane::init() {
 		exit(-1);
 	}
 
+	passShaderID = LoadShaders("shaders/pass.vert","shaders/pass.frag");
+
 	startUniformLoc = glGetUniformLocation(sID, "start");
+	startTexUniformLoc = glGetUniformLocation(sID, "text_start");
+	pixelTexUniformLoc = glGetUniformLocation(sID, "pixel_sampler");
 
-	screenSID = LoadShaders("shaders/pass.vert", "shaders/pass.frag");
-	screenTexUniformLoc = glGetUniformLocation(screenSID,"text_sampler");
-	pixelTexUniformLoc = glGetUniformLocation(screenSID,"pixel_sampler");
-
+	passTexUniformLoc = glGetUniformLocation(passShaderID,"text_sampler");
 	glGenBuffers(1, &pboID);
 
 }
@@ -109,28 +111,21 @@ void Plane::initTexture(){
 
 	srand(time(NULL));
 
-	for ( unsigned int i = 1; i<sizeof(data); i++ ){
+	for ( unsigned int i = 0; i<sizeof(data); i++ ){
 
-		int o = rand() % 10;
-		if (o == 9){
-			data[i] = 255;
-		}else{
-			data[i] = 0;
-		}
-
-	//data[i] = 0;
+		data[i] = 0;
 
 	}
 
-	//data[0] = 255;
-	//data[1] = 0;
-	//data[2] = 0;
+	for ( unsigned int i = 1; i < sizeof(data); i += 3){
+		int r = rand() % 2;
+		if (r == 0 ){
+			data[i] = 255;
+		}
+	}
 
-	//data[3] = 0;
-	//data[4] = 255;
-	//data[5] = 0;
-
-	glGenTextures(3, textID );
+	// Main pixel texture
+	glGenTextures(2, textID );
 	glBindTexture(GL_TEXTURE_2D, textID[0]);
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -139,9 +134,8 @@ void Plane::initTexture(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-	textUniformLoc[0] = glGetUniformLocation(sID, "text_sampler");
 
-	// start pixle arrangment
+	// start pixle texture
 	glBindTexture(GL_TEXTURE_2D, textID[1]);
 	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -150,26 +144,19 @@ void Plane::initTexture(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-	textUniformLoc[1] = glGetUniformLocation(sID, "text_start");
-
-
-	glBindTexture(GL_TEXTURE_2D, textID[2]);
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, 0 );
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h,
+		GL_RGB, GL_UNSIGNED_BYTE, data);
 
 	glBindTexture(GL_TEXTURE_2D,0);
 
-//	glViewport(0,0,w,h);
 }
 
 void Plane::draw() {
 
 
 	// For the frame buffer but right now the fram buffer is disabled
+
+	// This is not drawn to the screen it is drawn just to be saved into a pixle buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0,w,h);
 
@@ -179,22 +166,23 @@ void Plane::draw() {
 
 	glBindVertexArray(vaoID[0]);
 
-	glUniform1i(textUniformLoc[1], 1);
 	glUniform1i(pixelTexUniformLoc, 0);
 	glUniform1i(startUniformLoc, start);
 
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textID[2] );
+	glBindTexture(GL_TEXTURE_2D, textID[0] );
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h,
 		GL_RGB, GL_UNSIGNED_BYTE, 0);
 	glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*3,0,GL_DYNAMIC_DRAW);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, textID[1] );
 
- //Set the uniform texture sampler to use texture 0
+	//if (start == 1) {
+		glActiveTexture(GL_TEXTURE1);
+		glUniform1i(startTexUniformLoc, 1);
+		glBindTexture(GL_TEXTURE_2D, textID[1] );
+	//}
 
 
 	glEnableVertexAttribArray(0);
@@ -208,14 +196,15 @@ void Plane::draw() {
 
 	glReadPixels(0,0,w,h, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
+	// This is where it is drawn to the screen. The viewport is set to be the whole screen
 
-/*
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0,0,w,h);
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0,0,window_w,window_h);
 
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram( screenSID );
+	glUseProgram( passShaderID );
 
 	glBindVertexArray(vaoID[1]);
 
@@ -223,30 +212,36 @@ void Plane::draw() {
 	glEnableVertexAttribArray(1);
 
 	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(passTexUniformLoc, 0);
 	glBindTexture(GL_TEXTURE_2D, textID[0] );
+	//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
+	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h,
+	//	GL_RGB, GL_UNSIGNED_BYTE, 0);
+	//glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*3,0,GL_DYNAMIC_DRAW);
+
 	// Set the uniform texture sampler to use texture 0
-	glUniform1i(screenTexUniformLoc, 0);
+
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-	glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, pboID);
-	glNamedFramebufferReadBuffer(frameBufferID,GL_FRONT);
+	//glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, pboID);
+  //glNamedFramebufferReadBuffer(frameBufferID,GL_FRONT);
 
-	glReadPixels(0,0,w,h, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	//glReadPixels(0,0,w,h, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
-	*/
-	glBindTexture(GL_TEXTURE_2D, 0 );
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glBindTexture(GL_TEXTURE_2D, 0 );
 
 	glBindVertexArray(0);
 
 	glUseProgram(0);
 
 	start = 0;
-	//usleep( 50000 * 2); // 500000 * 2 = one sec
+	//usleep( 5000000 * 2); // 500000 * 2 = one sec
 }
 
 Plane::~Plane(){

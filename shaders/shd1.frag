@@ -5,7 +5,6 @@ in vec2 texCoord;
 
 layout(location = 0) out vec4 n_color;
 
-uniform sampler2D text_sampler;
 uniform sampler2D text_start;
 uniform sampler2D pixel_sampler;
 uniform int start;

@@ -9,9 +9,11 @@
 GLFWwindow* window;
 GLuint programID;
 Plane* p;
-const int width = 1920;
-const int height = 1080;
+const int wwidth = 1920;
+const int wheight = 1080;
 
+const int width = 64;
+const int height = 48;
 
 void initOpenGL(){
 
@@ -26,9 +28,11 @@ void initOpenGL(){
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
+//const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+	window = glfwCreateWindow( wwidth, wheight, "Visuals", glfwGetPrimaryMonitor() , NULL);
 
 
-	window = glfwCreateWindow( width, height, "Visuals", glfwGetPrimaryMonitor(), NULL);
 
 	if( window == NULL ){
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
@@ -46,7 +50,7 @@ void initOpenGL(){
 
 
 	programID = LoadShaders("shaders/shd1.vert","shaders/shd1.frag");
-	p = new Plane( programID, width, height );
+	p = new Plane( programID, width, height, wwidth, wheight);
 
 	p->init();
 }

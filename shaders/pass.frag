@@ -10,9 +10,8 @@ uniform sampler2D text_sampler;
 
 void main() {
 
-  float ng = texelFetch( text_sampler, ivec2(texCoord) + ivec2(-1,0),0).g;
   //color = texelFetch( text_sampler, ivec2(texCoord),0);
-  color = texture(text_sampler, texCoord);
+  color = texelFetch(text_sampler, ivec2(texCoord),0);
   /*
   if (ng > 0.5 || mg > 0.5){
     color = vec4(0,1,0,1);

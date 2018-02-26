@@ -9,7 +9,7 @@
 
 class Plane {
 public:
-	Plane( GLuint shaderID, int width, int height );
+	Plane( GLuint shaderID, int width, int height, int window_width, int window_height );
 	virtual ~Plane();
 
 	virtual void init();
@@ -29,17 +29,23 @@ private:
 	GLuint startUniformLoc;
 
 	GLuint frameBufferID;
-	GLuint screenSID;
 	GLuint rboID;
-	GLuint screenTexUniformLoc;
+	GLuint startTexUniformLoc;
 	GLuint pixelTexUniformLoc;
 
 	GLuint pboID;
+
+	// For drawing to the screen
+	GLuint passShaderID;
+	GLuint passTexUniformLoc;
 
 	int start;
 
 	int w;
 	int h;
+
+	int window_w;
+	int window_h;
 
 	virtual void initTexture();
 

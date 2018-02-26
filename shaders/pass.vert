@@ -6,6 +6,6 @@ layout (location = 1) in vec2 vertUV;
 out vec2 texCoord;
 
 void main() {
-		gl_Position = vec4(position.x ,position.y, -0.5, 1 );
-		texCoord  = (position.xy+vec2(1,1))/2.0;
+		gl_Position = vec4(position.x ,position.y, 0.5, 1 );
+		texCoord  = vertUV;
 }
