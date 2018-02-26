@@ -25,10 +25,10 @@ private:
 	GLuint vboTexCoordID[2];
 
 	GLuint textID[3];
-	GLuint textUniformLoc[3];
+	GLuint texUniformLoc[3];
 	GLuint startUniformLoc;
 
-	GLuint frameBufferID;
+	GLuint frameBufferID[2];
 	GLuint rboID;
 	GLuint startTexUniformLoc;
 	GLuint pixelTexUniformLoc;
@@ -37,7 +37,7 @@ private:
 
 	// For drawing to the screen
 	GLuint passShaderID;
-	GLuint passTexUniformLoc;
+	GLuint passFBShaderID;
 
 	int start;
 
