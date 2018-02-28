@@ -30,16 +30,16 @@ void main() {
 
 			if (myColor.g >= 0.5){
 				if (count < 2){
-					n_color = vec4(1,0,0,1);
-				}else if (count > 3){
 					n_color = vec4(0,0,1,1);
+				}else if (count > 3){
+					n_color = vec4(1,0,0,1);
 				}else{
 					n_color = vec4(0,1,0,1);
 				}
 			}else if(count == 3){
-				n_color = vec4(1,1,0,1);
+				n_color = vec4(0,1,0,0);
 			}else{
-				n_color= vec4(myColor.r,0,myColor.ba);
+				n_color = vec4(0,0,0,1);
 			}
 
 		}
