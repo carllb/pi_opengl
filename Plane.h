@@ -9,35 +9,42 @@
 
 class Plane {
 public:
-	Plane( GLuint shaderID, int width, int height, int window_width, int window_height );
+	Plane( GLuint shaderID, int width, int height, int window_width, int window_height, GLFWwindow* w );
 	virtual ~Plane();
 
 	virtual void init();
 
+	virtual void bufferTexCoords( int i );
+
 	virtual void draw();
 
-private:
+	virtual void uniformMouse();
 
+	virtual void initTexture();
 
+	int getWidth() {
+		return w;
+	}
+
+	int getHeight() {
+		return h;
+	}
+
+	GLuint vboTexCoordID[2];
 	GLuint sID;
 	GLuint vaoID[2];
 	GLuint vboVertID[2];
-	GLuint vboTexCoordID[2];
 
 	GLuint textID[3];
 	GLuint texUniformLoc[3];
 	GLuint startUniformLoc;
 
 	GLuint frameBufferID[2];
-	GLuint rboID;
-	GLuint startTexUniformLoc;
-	GLuint pixelTexUniformLoc;
 
-	GLuint pboID;
+	GLuint mouseUniformLoc;
 
 	// For drawing to the screen
 	GLuint passShaderID;
-	GLuint passFBShaderID;
 
 	int start;
 
@@ -47,7 +54,20 @@ private:
 	int window_w;
 	int window_h;
 
-	virtual void initTexture();
+	GLFWwindow* window;
+
+private:
+
+
+	GLuint rboID;
+	GLuint startTexUniformLoc;
+	GLuint pixelTexUniformLoc;
+
+	//GLuint pboID;
+
+	GLuint passFBShaderID;
+
+
 
 };
 

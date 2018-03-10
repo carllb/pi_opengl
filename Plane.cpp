@@ -7,9 +7,9 @@
 #include <iostream>
 #include <unistd.h>
 
-Plane::Plane( GLuint shaderID, int width, int height, int window_width, int window_height ):
+Plane::Plane( GLuint shaderID, int width, int height, int window_width, int window_height, GLFWwindow* w ):
 	sID(shaderID), start(1), w(width), h(height), window_w(window_width),
-		window_h(window_height)
+		window_h(window_height), window(w)
 {
 }
 
@@ -28,16 +28,7 @@ void Plane::init() {
 		 1.0f,  1.0f, //f
 	};
 
-	static const GLint texCoords[] = {
-		// Left bottom triangle
-		0, h, //a
-		0, 0, //b
-		w, 0, //c
-		//Right top triangle
-		w, 0, //d
-	  0, h, //e
-		w, h  //f
-	};
+
 
 
 
@@ -60,10 +51,7 @@ void Plane::init() {
 			GL_STATIC_DRAW );
 		glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vboTexCoordID[i] );
-		glBufferData(GL_ARRAY_BUFFER, sizeof( texCoords ), texCoords,
-			GL_STATIC_DRAW );
-		glVertexAttribPointer(1, 2, GL_INT, false, 0, 0);
+		bufferTexCoords( i );
 
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, 0 );
@@ -101,8 +89,28 @@ void Plane::init() {
 	texUniformLoc[0] = glGetUniformLocation(sID, "pixel_sampler");
 
 	texUniformLoc[2] = glGetUniformLocation(passShaderID,"text_sampler");
-	glGenBuffers(1, &pboID);
 
+	mouseUniformLoc = glGetUniformLocation(sID, "mouse");
+
+}
+
+void Plane::bufferTexCoords( int i) {
+	static const GLint texCoords[] = {
+		// Left bottom triangle
+		0, h, //a
+		0, 0, //b
+		w, 0, //c
+		//Right top triangle
+		w, 0, //d
+		0, h, //e
+		w, h  //f
+	};
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboTexCoordID[i] );
+	glBufferData(GL_ARRAY_BUFFER, sizeof( texCoords ), texCoords,
+		GL_STATIC_DRAW );
+	glVertexAttribPointer(1, 2, GL_INT, false, 0, 0);
 }
 
 
@@ -114,18 +122,21 @@ void Plane::initTexture(){
 	srand(time(NULL));
 
 	for ( unsigned int i = 0; i<size; i++ ){
-
-		data[i] = 0;
+		if (i % 3 == 1){
+			data[i] = (rand() % 4) == 0? 255: 0;
+		}else{
+			data[i] = 0;
+		}
 
 	}
-
+	/*
 	for ( unsigned int i = 1; i < size; i += 3){
 		int r = rand() % 2;
 		if (r == 0 ){
 			data[i] = 255;
 		}
 	}
-
+*/
 	// Main pixel texture
 	glGenTextures(3, textID );
 	glBindTexture(GL_TEXTURE_2D, textID[0]);
@@ -161,6 +172,15 @@ void Plane::initTexture(){
 	delete data;
 }
 
+void Plane::uniformMouse(){
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+	//xpos = rand() % (window_w + 1);
+	//pos = rand() % (window_h + 1);
+	//std::cout <<"x:" << xpos << "y: %f" << ypos << std::endl;
+	glUniform2i(	mouseUniformLoc, xpos, window_h-ypos );
+}
+
 void Plane::draw() {
 
 
@@ -179,6 +199,8 @@ void Plane::draw() {
 
 	glUniform1i(texUniformLoc[0], 0);
 	glUniform1i(startUniformLoc, start);
+
+	uniformMouse();
 
 	if (start == 1) {
 		glActiveTexture(GL_TEXTURE1);
@@ -209,7 +231,7 @@ void Plane::draw() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, vboTexCoordID[0]);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_INT, false, 0, 0);
+	//glVertexAttribPointer(1, 2, GL_INT, false, 0, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(texUniformLoc[2], 0);
@@ -245,14 +267,14 @@ void Plane::draw() {
 	glUseProgram(0);
 
 	start = 0;
-	//usleep( 500000 * 2); // 500000 * 2 = one sec
+	//usleep( 500000 ); // 500000 * 2 = one sec
 }
 
 Plane::~Plane(){
 	glDeleteTextures(2, textID );
 	glDeleteBuffers(2, vboTexCoordID);
 	glDeleteBuffers(2, vboVertID);
-	glDeleteBuffers(1, &pboID);
+
 //	glDeleteVertexArrays(2, vaoID);
 	glDeleteFramebuffers(2, frameBufferID);
 }

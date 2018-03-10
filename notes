@@ -1,0 +1,1 @@
+bind frame buffer -> render onto the plane (if start == 1 start tex 0 else use tex 1|2) -> render the frame buffers texture 

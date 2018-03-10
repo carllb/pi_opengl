@@ -1,6 +1,6 @@
 
 
-#include "Plane.h"
+#include "NormPlane.h"
 #include "tutorial/shader.hpp"
 
 #include <stdio.h>
@@ -12,8 +12,8 @@ Plane* p;
 const int wwidth = 1920;
 const int wheight = 1080;
 
-const int width = 1024; //1024;
-const int height = 567; //576;
+const int width = 1920; //1024;
+const int height = 1080; //576;
 
 void initOpenGL(){
 
@@ -31,8 +31,8 @@ void initOpenGL(){
 
 //const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
+	//window = glfwCreateWindow( wwidth, wheight, "Visuals", NULL , NULL);
 	window = glfwCreateWindow( wwidth, wheight, "Visuals", glfwGetPrimaryMonitor() , NULL);
-
 
 
 	if( window == NULL ){
@@ -51,17 +51,18 @@ void initOpenGL(){
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 
-	programID = LoadShaders("shaders/shd1.vert","shaders/shd1.frag");
-	p = new Plane( programID, width, height, wwidth, wheight);
+	programID = LoadShaders("shaders/shd1.vert","shaders/shd3.frag");
+	p = new NormPlane( programID, width, height, wwidth, wheight, window);
 
+	glfwSwapInterval(1);
 	p->init();
 }
 
 void beginRender(){
 	do {
 
-
 		p->draw();
+
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
