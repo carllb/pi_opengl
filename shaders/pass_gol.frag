@@ -1,5 +1,4 @@
-#version 330 core
-
+#version 320 es
 
 in vec2 texCoord;
 

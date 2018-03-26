@@ -25,8 +25,8 @@ void initOpenGL(){
 	}
 
 	//glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2); // We want OpenGL 2.0 ES
+//	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 2.0 ES
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
 //const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -52,6 +52,7 @@ void initOpenGL(){
 
 
 	programID = LoadShaders("shaders/shd1.vert","shaders/shd3.frag");
+	//p = new NormPlane( programID, width, height, wwidth, wheight, window);
 	p = new NormPlane( programID, width, height, wwidth, wheight, window);
 
 	glfwSwapInterval(1);
@@ -63,9 +64,12 @@ void beginRender(){
 
 		p->draw();
 
-
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
+			p->reset();
+		}
 
 	} while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 				glfwWindowShouldClose(window) == 0 );

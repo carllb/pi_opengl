@@ -22,6 +22,8 @@ public:
 
 	virtual void initTexture();
 
+	virtual void reset();
+
 	int getWidth() {
 		return w;
 	}

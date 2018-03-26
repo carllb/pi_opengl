@@ -270,6 +270,11 @@ void Plane::draw() {
 	//usleep( 500000 ); // 500000 * 2 = one sec
 }
 
+
+void Plane::reset(){
+	start = 1;
+}
+
 Plane::~Plane(){
 	glDeleteTextures(2, textID );
 	glDeleteBuffers(2, vboTexCoordID);
