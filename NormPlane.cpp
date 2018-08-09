@@ -3,11 +3,13 @@
 #include "tutorial/shader.hpp"
 
 #include<iostream>
+#include<cmath>
 
 NormPlane::NormPlane( GLuint shaderID, int width, int height, int window_width, int window_height, GLFWwindow* w ):
   Plane( shaderID, width, height, window_width, window_height, w)
 {
-
+  currX = 0;
+  currY = 0;
 }
 
 
@@ -18,6 +20,11 @@ void NormPlane::uniformMouse(){
   	//pos = rand() % (window_h + 1);
   	//std::cout <<"x:" << xpos << "y: %f" << ypos << std::endl;
   	glUniform2f(	mouseUniformLoc, xpos/window_w, 1 - ypos/window_h );
+    currY += 0.01;
+    if(currY >= 0.5){
+      currY = 0;
+      currX = cos(currY);
+    }
 
   }
 

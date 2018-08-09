@@ -13,6 +13,8 @@ public:
    virtual void uniformMouse();
 
    virtual void bufferTexCoords( int i );
+private:
+  double currX, currY;
 
 };
 
