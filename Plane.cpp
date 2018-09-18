@@ -164,8 +164,6 @@ void Plane::initTexture(){
 void Plane::draw() {
 
 
-
-
 	// This is not drawn to the screen it is drawn to framebuffer 0
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID[0]);
 	glViewport(0,0,w,h);
@@ -247,7 +245,7 @@ void Plane::draw() {
 	glUseProgram(0);
 
 	start = 0;
-	//usleep( 5000000 * 2); // 500000 * 2 = one sec
+	//usleep( 500000 * 2); // 500000 * 2 = one sec
 }
 
 Plane::~Plane(){

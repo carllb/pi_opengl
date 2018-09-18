@@ -12,8 +12,8 @@ Plane* p;
 const int wwidth = 1920;
 const int wheight = 1080;
 
-const int width = 32;
-const int height = 18;
+const int width = 1920; //1024;
+const int height = 1080; //576;
 
 void initOpenGL(){
 
@@ -26,7 +26,7 @@ void initOpenGL(){
 
 	//glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2); // We want OpenGL 2.1
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2); // We want OpenGL 2.0 ES
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
 //const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
