@@ -125,6 +125,7 @@ void Plane::initTexture(){
 		if (i % 3 == 1){
 			data[i] = (rand() % 4) == 0? 255: 0;
 		}else{
+			//data[i] = (rand() % 255 );
 			data[i] = 0;
 		}
 

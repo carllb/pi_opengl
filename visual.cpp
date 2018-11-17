@@ -50,8 +50,14 @@ void initOpenGL(){
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
+	// Effects shaders
 
-	programID = LoadShaders("shaders/shd1.vert","shaders/shd3.frag");
+	/* Version two? */
+	programID = LoadShaders("shaders/wave/wave.vert", "shaders/wave/wave.frag");
+
+	/* Version one */
+	//programID = LoadShaders("shaders/shd1.vert","shaders/shd3.frag");
+
 	//p = new NormPlane( programID, width, height, wwidth, wheight, window);
 	p = new NormPlane( programID, width, height, wwidth, wheight, window);
 

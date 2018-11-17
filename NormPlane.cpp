@@ -96,6 +96,7 @@ void NormPlane::init() {
 		exit(-1);
 	}
 
+	// Pass-through shaders
 	passShaderID = LoadShaders("shaders/pass.vert","shaders/pass2.frag");
 
 	startUniformLoc = glGetUniformLocation(sID, "start");
