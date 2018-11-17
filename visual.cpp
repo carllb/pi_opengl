@@ -12,8 +12,8 @@ Plane* p;
 const int wwidth = 1920;
 const int wheight = 1080;
 
-const int width = 64;
-const int height = 48;
+const int width = 1920;
+const int height = 1080;
 
 void initOpenGL(){
 
