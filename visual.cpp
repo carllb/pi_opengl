@@ -6,20 +6,27 @@
 #include <stdio.h>
 #include <iostream>
 
+
 GLFWwindow* window;
 GLuint programID;
 Plane* p;
 const int wwidth = 1920;
 const int wheight = 1080;
 
+#ifndef RESOLUTION
 const int width = 1920;
 const int height = 1080;
+#else
+const int width = RESOLUTION_WIDTH;
+const int height = RESOLUTION_HEIGHT;
+#endif
 
 //const int width = 64;
 //const int height = 48;
 
 void initOpenGL(){
 
+	std::cout << width << " " << height << std::endl;
 
 	if( !glfwInit() )
 	{
@@ -51,7 +58,7 @@ void initOpenGL(){
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-
+	// These shaders do the "effect"
 	programID = LoadShaders("shaders/shd1.vert","shaders/shd1.frag");
 	p = new Plane( programID, width, height, wwidth, wheight);
 
