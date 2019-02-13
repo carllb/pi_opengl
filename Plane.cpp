@@ -7,9 +7,9 @@
 #include <iostream>
 #include <unistd.h>
 
-Plane::Plane( GLuint shaderID, int width, int height, int window_width, int window_height ):
+Plane::Plane( GLuint shaderID, int width, int height, int window_width, int window_height, GLFWwindow* w ):
 	sID(shaderID), start(1), w(width), h(height), window_w(window_width),
-		window_h(window_height)
+		window_h(window_height), window(w)
 {
 }
 
@@ -94,6 +94,7 @@ void Plane::init() {
 		exit(-1);
 	}
 
+	// These mostly just pass the image data along
 	passShaderID = LoadShaders("shaders/pass.vert","shaders/pass.frag");
 
 	startUniformLoc = glGetUniformLocation(sID, "start");
@@ -101,6 +102,9 @@ void Plane::init() {
 	pixelTexUniformLoc = glGetUniformLocation(sID, "pixel_sampler");
 
 	passTexUniformLoc = glGetUniformLocation(passShaderID,"text_sampler");
+
+	mouseUniformLoc = glGetUniformLocation(sID, "mouse_loc");
+
 	glGenBuffers(1, &pboID);
 
 }
@@ -117,10 +121,21 @@ void Plane::initTexture(){
 
 	}
 
-	for ( unsigned int i = 1; i < sizeof(data); i += 3){
-		int r = rand() % 2;
-		if (r == 0 ){
-			data[i] = 255;
+	for ( unsigned int i = 1; i < sizeof(data); i ++){
+		if ( i % 3 == 2){
+			// Water
+			if (rand() % 10 == 0){
+				;//data[i] = rand() % 255;
+			}
+			
+		}else if ( i % 3 == 1){
+			// Grass
+			data[i] = rand() % 255;
+		}else if (i % 3 == 0){
+			//Dude
+			if (rand() % 500 == 0) {
+				data[i] = rand() %255;
+			}
 		}
 	}
 
@@ -151,6 +166,20 @@ void Plane::initTexture(){
 
 }
 
+
+void Plane::uniformMouse() {
+	double xpos, ypos;
+  	glfwGetCursorPos(window, &xpos, &ypos);
+
+	xpos = (xpos / window_w) * w;
+	ypos = (ypos / window_h) * h;
+
+  	//xpos = rand() % (window_w + 1);
+  	//pos = rand() % (window_h + 1);
+  	//std::cout <<"x:" << xpos << "y: %f" << ypos << std::endl;
+  	glUniform2i( mouseUniformLoc, xpos, h - ypos );
+}
+
 void Plane::draw() {
 
 
@@ -169,6 +198,7 @@ void Plane::draw() {
 	glUniform1i(pixelTexUniformLoc, 0);
 	glUniform1i(startUniformLoc, start);
 
+	uniformMouse();
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textID[0] );

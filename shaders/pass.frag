@@ -7,6 +7,7 @@ out vec4 color;
 
 uniform sampler2D text_sampler;
 
+// Just pass the color along
 
 void main() {
 

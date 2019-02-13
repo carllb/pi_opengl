@@ -9,7 +9,7 @@
 
 class Plane {
 public:
-	Plane( GLuint shaderID, int width, int height, int window_width, int window_height );
+	Plane( GLuint shaderID, int width, int height, int window_width, int window_height, GLFWwindow* window );
 	virtual ~Plane();
 
 	virtual void init();
@@ -17,7 +17,6 @@ public:
 	virtual void draw();
 
 private:
-
 
 	GLuint sID;
 	GLuint vaoID[2];
@@ -39,6 +38,9 @@ private:
 	GLuint passShaderID;
 	GLuint passTexUniformLoc;
 
+	// To pass the mouse
+	GLuint mouseUniformLoc;
+
 	int start;
 
 	int w;
@@ -46,8 +48,11 @@ private:
 
 	int window_w;
 	int window_h;
+	GLFWwindow* window;
 
 	virtual void initTexture();
+
+	virtual void uniformMouse();
 
 };
 

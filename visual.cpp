@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <unistd.h>
 
 
 GLFWwindow* window;
@@ -59,8 +60,8 @@ void initOpenGL(){
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	// These shaders do the "effect"
-	programID = LoadShaders("shaders/shd1.vert","shaders/shd1.frag");
-	p = new Plane( programID, width, height, wwidth, wheight);
+	programID = LoadShaders("shaders/grass.vert","shaders/grass.frag");
+	p = new Plane( programID, width, height, wwidth, wheight, window);
 
 	p->init();
 }
@@ -68,11 +69,14 @@ void initOpenGL(){
 void beginRender(){
 	do {
 
+		float seconds = 0.005;
 
 		p->draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		usleep((int)(seconds * 1000000));
 
 	} while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
 				glfwWindowShouldClose(window) == 0 );

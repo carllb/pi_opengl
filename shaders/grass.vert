@@ -5,9 +5,7 @@ layout (location = 1) in vec2 vertUV;
 
 out vec2 texCoord;
 
-// Pretty much do nothing
-
 void main() {
-		gl_Position = vec4(position.x ,position.y, 0.5, 1 );
-		texCoord  = vertUV;
+		gl_Position = vec4(position, 0.5, 1 );
+		texCoord = vec2(vertUV.x, vertUV.y);
 }
